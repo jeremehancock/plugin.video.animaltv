@@ -56,7 +56,7 @@ def stream_list():
             try:
                 # Python 3
                 m7lib.Common.add_channel(stream["id"], stream["icon"], stream["fanart"], stream["title"].decode('UTF-8'))
-            except ImportError:
+            except:
                 # Python 2
                 m7lib.Common.add_channel(stream["id"], stream["icon"], stream["fanart"], stream["title"])
     except StandardError:
@@ -75,7 +75,7 @@ def parse_query(query, clean=True):
     try:
         # Python 3
         queries = parse_qs(query)
-    except ImportError:
+    except:
         # Python 2
         queries = urlparse.parse_qs(query)
 
@@ -85,3 +85,4 @@ def parse_query(query, clean=True):
     if clean:
         q['mode'] = q.get('mode', 'main')
     return q
+
