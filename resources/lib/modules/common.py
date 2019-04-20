@@ -53,10 +53,10 @@ def stream_list():
     try:
         streams = m7lib.Stream.get_explore_org_streams()
         for stream in sorted(streams, key=lambda k: k['title']):
-            try:
+            if (sys.version_info > (3, 0)):
                 # Python 3
                 m7lib.Common.add_channel(stream["id"], stream["icon"], stream["fanart"], stream["title"].decode('UTF-8'))
-            except:
+            else:
                 # Python 2
                 m7lib.Common.add_channel(stream["id"], stream["icon"], stream["fanart"], stream["title"])
     except StandardError:
