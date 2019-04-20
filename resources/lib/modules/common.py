@@ -25,7 +25,6 @@ import m7lib
 
 try:
     # Python 3
-    from urllib.parse import urlparse
     from urllib.parse import parse_qs
 except ImportError:
     # Python 2
