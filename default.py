@@ -1,6 +1,7 @@
 """
     Animal TV Add-on
     Developed by mhancoc7
+    https://patreon.m7kodi.dev
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@ import resources.lib.modules.common as common
 mode = common.AnimalTV().plugin_queries['mode']
 
 if mode == "main":
+    common.patreon_notify()
     common.stream_list()
 
 else:

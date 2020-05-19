@@ -35,6 +35,7 @@ addon = xbmcaddon.Addon()
 addon_name = addon.getAddonInfo('name')
 addon_id = addon.getAddonInfo('id')
 plugin_path = xbmcaddon.Addon(id=addon_id).getAddonInfo('path')
+patreon_logo = xbmc.translatePath(os.path.join(plugin_path, 'resources', 'images', 'patreon.jpg'))
 icon = xbmc.translatePath(os.path.join(plugin_path, 'icon.png'))
 fanart = xbmc.translatePath(os.path.join(plugin_path, 'icon.png'))
 
@@ -44,8 +45,20 @@ class AnimalTV:
 
 
 def dlg_oops(heading):
-    dlg.ok(heading, "Oops something went wrong.")
+    dlg.ok(heading, get_string(9005))
     exit()
+
+
+def patreon_notify():
+    # Display Patreon Reminder
+    if len(get_setting('patreon_notify')) > 0:
+        set_setting('patreon_notify', str(int(get_setting('patreon_notify')) + 1))
+    else:
+        set_setting('patreon_notify', "1")
+    if int(get_setting('patreon_notify')) == 1:
+        dlg.notification(get_string(9004), get_string(9003), patreon_logo, 5000, False)
+    elif int(get_setting('patreon_notify')) == 5:
+        set_setting('patreon_notify', "0")
 
 
 def stream_list():
@@ -69,6 +82,17 @@ def play_stream(video_id):
     except StandardError:
         dlg_oops(addon_name)
 
+
+def get_setting(setting):
+    return addon.getSetting(setting)
+
+
+def set_setting(setting, string):
+    return addon.setSetting(setting, string)
+
+
+def get_string(string_id):
+    return addon.getLocalizedString(string_id)
 
 def parse_query(query, clean=True):
     queries = parse_qs(query)
