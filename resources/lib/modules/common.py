@@ -18,6 +18,8 @@
 
 import os
 import sys
+import time
+import pickle
 import xbmc
 import xbmcgui
 import xbmcaddon
@@ -35,6 +37,7 @@ addon = xbmcaddon.Addon()
 addon_name = addon.getAddonInfo('name')
 addon_id = addon.getAddonInfo('id')
 plugin_path = xbmcaddon.Addon(id=addon_id).getAddonInfo('path')
+data_path = xbmc.translatePath(xbmcaddon.Addon(id=addon_id).getAddonInfo('profile'))
 patreon_logo = xbmc.translatePath(os.path.join(plugin_path, 'resources', 'images', 'patreon.jpg'))
 icon = xbmc.translatePath(os.path.join(plugin_path, 'icon.png'))
 fanart = xbmc.translatePath(os.path.join(plugin_path, 'icon.png'))
@@ -63,14 +66,17 @@ def patreon_notify():
 
 def stream_list():
     try:
-        streams = m7lib.Stream.get_explore_org_streams()
-        for stream in sorted(streams, key=lambda k: k['title']):
-            if (sys.version_info > (3, 0)):
-                # Python 3
-                m7lib.Common.add_channel(stream["id"], stream["icon"], stream["fanart"], stream["title"].decode('UTF-8'))
-            else:
-                # Python 2
-                m7lib.Common.add_channel(stream["id"], stream["icon"], stream["fanart"], stream["title"])
+        fname = data_path + "/streams.cache"
+        if os.path.exists(fname) and os.stat(fname).st_mtime > time.time() - 1200:
+            with open(fname,'rb') as f:
+                streams = pickle.load(f)
+        else:
+            streams = sorted(m7lib.Stream.get_explore_org_streams(), key=lambda k: k['title'])
+            with open(fname,'wb') as f:
+                pickle.dump(streams,f)
+
+        m7lib.Common.add_streams(streams)
+
     except StandardError:
         dlg_oops(addon_name)
 
