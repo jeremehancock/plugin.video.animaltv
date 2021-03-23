@@ -20,7 +20,7 @@ import os
 import sys
 import time
 import pickle
-import xbmc
+import xbmcvfs
 import xbmcgui
 import xbmcaddon
 import m7lib
@@ -37,10 +37,10 @@ addon = xbmcaddon.Addon()
 addon_name = addon.getAddonInfo('name')
 addon_id = addon.getAddonInfo('id')
 plugin_path = xbmcaddon.Addon(id=addon_id).getAddonInfo('path')
-data_path = xbmc.translatePath(xbmcaddon.Addon(id=addon_id).getAddonInfo('profile'))
-patreon_logo = xbmc.translatePath(os.path.join(plugin_path, 'resources', 'images', 'patreon.jpg'))
-icon = xbmc.translatePath(os.path.join(plugin_path, 'icon.png'))
-fanart = xbmc.translatePath(os.path.join(plugin_path, 'icon.png'))
+data_path = xbmcvfs.translatePath(xbmcaddon.Addon(id=addon_id).getAddonInfo('profile'))
+patreon_logo = xbmcvfs.translatePath(os.path.join(plugin_path, 'resources', 'images', 'patreon.jpg'))
+icon = xbmcvfs.translatePath(os.path.join(plugin_path, 'icon.png'))
+fanart = xbmcvfs.translatePath(os.path.join(plugin_path, 'icon.png'))
 
 class AnimalTV:
     def __init__(self):
@@ -71,13 +71,13 @@ def stream_list():
             with open(fname,'rb') as f:
                 streams = pickle.load(f)
         else:
-            streams = sorted(m7lib.Stream.get_explore_org_streams(), key=lambda k: k['title'])
+            streams = sorted(m7lib.Stream.get_explore_org_streams(), key=lambda x: x['title'])
             with open(fname,'wb') as f:
                 pickle.dump(streams,f)
 
         m7lib.Common.add_streams(streams)
 
-    except StandardError:
+    except SyntaxError:
         dlg_oops(addon_name)
 
 
@@ -85,7 +85,7 @@ def play_stream(video_id):
     try:
         stream_url = m7lib.Common.get_playable_youtube_url(video_id)
         m7lib.Common.play(stream_url)
-    except StandardError:
+    except SyntaxError:
         dlg_oops(addon_name)
 
 
