@@ -1,3 +1,5 @@
+# This project has been discontinued.
+
 # plugin.video.animaltv
 
 ## Submit issues via m7 Kodi Addons
